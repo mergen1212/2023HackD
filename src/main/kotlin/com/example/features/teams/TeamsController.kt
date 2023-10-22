@@ -21,12 +21,20 @@ class TeamsController(val call: ApplicationCall) {
 
         if (!Tournaments.isStatusActive(receive.tournamentId)){
             call.respond(HttpStatusCode.BadRequest, "Регистрация на турнир закончилась")
+        }else if (Tournaments.isTournamentFull(receive.tournamentId)) {
+            call.respond(HttpStatusCode.BadRequest, "Закончились места на турнир")
         }else if (TokenCheck.isTokenValid(token.orEmpty())){
             val tokenDTO = Tokens.fetchTokens1(token.toString())
             val userDTO = tokenDTO?.let { Users.fetchUser(it.email) }
             if (userDTO != null) {
-                try {
-
+                if (Teams.isExists(
+                    receive.user1,
+                    receive.user2,
+                    receive.tournamentId
+                )){
+                    call.respond(HttpStatusCode.Conflict, "1 или несколько участников записаны на турнир")
+                }else {
+                    Tournaments.incTeamCount(receive.tournamentId)
                     Teams.insertTeam(
                         TeamsDTO(
                             user1 = receive.user1,
@@ -34,10 +42,7 @@ class TeamsController(val call: ApplicationCall) {
                             tournamentId = receive.tournamentId,
                         )
                     )
-                    Tournaments.incTeamCount(receive.tournamentId)
                     call.respond(HttpStatusCode.OK, "Запись выполнена")
-                }catch (e: Exception){
-                    call.respond(HttpStatusCode.BadRequest, "Команда уже существует")
                 }
             }
         }else{

@@ -66,4 +66,22 @@ object Tournaments: Table() {
             }
         }
     }
+
+    fun isTournamentFull(tournamentId:Int):Boolean{
+        return transaction {
+            //val selectedSize = (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.size]
+            //val selectedCount = (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.size]
+            (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.size] ==
+                    (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.teamCount]
+        }
+    }
+    fun changeTournamentStatus(userId: Int, tournamentId:Int){
+        transaction {
+            val u1 = select {
+                //Teams.user1.eq(user1) and Teams.tournamentId.eq(tournamentId)
+                Tournaments.creatorId.eq(userId)
+            }.singleOrNull()
+            if (u1 != null)
+        }
+    }
 }

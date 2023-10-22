@@ -1,9 +1,8 @@
 package com.example.database.teams
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.postgresql.util.PSQLException
 
 object Teams: Table() {
     private val user1 = Teams.integer("user1")
@@ -19,16 +18,25 @@ object Teams: Table() {
             }
         }
     }
-    fun isExists(user1: Int, tournamentId:Int): Boolean{
+    fun isExists(user1: Int, user2: Int? = null, tournamentId:Int): Boolean{
         return try {
-            transaction {
-                 (select { Teams.user1.eq(user1) }.single())
-                (select { Teams.tournamentId.eq(tournamentId) }.single())
-            }
-            false
-        }catch (e: Exception){
-            true
-        }
 
+            val user2n:Int?
+            if (user2 == null) {
+                user2n = 0
+            } else {user2n = user2}
+            transaction {
+                val u1 = select {
+                    Teams.user1.eq(user1) and Teams.tournamentId.eq(tournamentId) or
+                            Teams.user2.eq(user2) and Teams.tournamentId.eq(tournamentId) or
+                            Teams.user1.eq(user2n) and Teams.tournamentId.eq(tournamentId) or
+                            Teams.user2.eq(user1) and Teams.tournamentId.eq(tournamentId)
+                }.singleOrNull()
+
+                u1 != null
+            }
+        }catch (e: PSQLException){
+            false
+        }
     }
 }
