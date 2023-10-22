@@ -7,18 +7,14 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.routing.*
 
 fun Application.configureHTTP() {
-    install(CORS){
-        anyHost()
-        allowHeader(HttpHeaders.ContentType)
+    install(CORS) {
         allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Get)
         allowHeader(HttpHeaders.Authorization)
-        allowHost("client-host")
-        allowHost("client-host:8081")
-        allowHost("client-host", subDomains = listOf("en", "de", "es"))
-        allowHost("client-host", schemes = listOf("http", "https"))
+        exposeHeader("Bearer-Authorization")
+        allowNonSimpleContentTypes = true // <-
+        anyHost()
     }
 }
 

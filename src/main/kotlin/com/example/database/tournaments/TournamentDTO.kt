@@ -9,4 +9,5 @@ data class TournamentDTO(
     val size: Int,
     val status: String,
     val creatorId: Int,
+    val teamCount: Int,
 )

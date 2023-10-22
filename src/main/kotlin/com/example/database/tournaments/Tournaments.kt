@@ -1,9 +1,7 @@
 package com.example.database.tournaments
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import com.example.database.teams.Teams
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object Tournaments: Table() {
@@ -12,8 +10,9 @@ object Tournaments: Table() {
     private val size = Tournaments.integer("size")
     private val status = Tournaments.varchar("status", 10)
     private val creatorId = Tournaments.integer("creator_id")
+    private val teamCount = Tournaments.integer("team_count")
 
-    fun insert(tournamentDTO: TournamentDTO){
+    fun insertTournament(tournamentDTO: TournamentDTO){
         transaction {
             Tournaments.insert{
                 it[name] = tournamentDTO.name
@@ -33,7 +32,8 @@ object Tournaments: Table() {
                             name = row[Tournaments.name],
                             size = row[Tournaments.size],
                             status = row[Tournaments.status],
-                            creatorId = row[Tournaments.creatorId]
+                            creatorId = row[Tournaments.creatorId],
+                            teamCount = row[Tournaments.teamCount],
                         )
                     }
             }
@@ -46,9 +46,23 @@ object Tournaments: Table() {
                             name = row[Tournaments.name],
                             size = row[Tournaments.size],
                             status = row[Tournaments.status],
-                            creatorId = row[Tournaments.creatorId]
+                            creatorId = row[Tournaments.creatorId],
+                            teamCount = row[Tournaments.teamCount],
                         )
                     }
+            }
+        }
+    }
+    fun isStatusActive(tournamentId:Int): Boolean{
+        return transaction {
+            (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.status].equals("OPENED")
+        }
+    }
+    fun incTeamCount(tournamentId:Int){
+        transaction {
+            val teamCount = (select { Tournaments.id.eq(tournamentId) }.single())[Tournaments.teamCount] +1
+            Tournaments.update({Tournaments.id.eq(tournamentId)}){
+                it[Tournaments.teamCount] = teamCount
             }
         }
     }

@@ -21,7 +21,7 @@ class RegisterController(val call: ApplicationCall) {
     suspend fun registerNewUser(){
 
         val registerReceiveRemote = call.receive<RegisterReceiveRemote>()
-        val api_key = call.request.headers["Bearer-Authorization"]
+        val api_key = call.request.headers["Authorization"]
 
         val userDTO = Users.fetchUser(registerReceiveRemote.email)
 

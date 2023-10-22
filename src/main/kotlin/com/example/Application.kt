@@ -8,6 +8,7 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import org.jetbrains.exposed.sql.Database
 import com.example.features.profile.configureProfileRouting
+import com.example.features.teams.configureTeamsRouting
 import com.example.features.tournaments.configureTournamentsRouting
 import com.example.features.update.configureUpdate
 import io.ktor.server.netty.*
@@ -23,7 +24,7 @@ fun main() {
 }
 
 fun Application.module() {
-    //configureHTTP()
+    configureHTTP()
     //configureSwagger()
     configureRouting()
     configureRegisterRouting()
@@ -33,6 +34,8 @@ fun Application.module() {
     configureUpdate()
 
     configureTournamentsRouting()
+    configureTeamsRouting()
+
 
     configureStaticRouting()
 

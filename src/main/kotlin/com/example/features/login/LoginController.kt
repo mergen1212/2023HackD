@@ -22,7 +22,7 @@ class LoginController(val call: ApplicationCall) {
 
         val receive = call.receive<LoginReceiveRemote>()
 
-        val api_key = call.request.headers["Bearer-Authorization"]
+        val api_key = call.request.headers["Authorization"]
 
         val userDTO = Users.fetchUser(receive.email)
 

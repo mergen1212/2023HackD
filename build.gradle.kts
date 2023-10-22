@@ -40,6 +40,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-features:1.6.6")
 
+    implementation("io.ktor:ktor-server-host-common:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     //implementation("io.ktor:ktor-server-swagger:$ktor_version")
     //implementation("io.ktor:ktor-server-openapi:$ktor_version")

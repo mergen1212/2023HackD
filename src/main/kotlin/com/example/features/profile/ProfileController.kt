@@ -10,7 +10,7 @@ import io.ktor.server.response.*
 
 class ProfileController(private val call: ApplicationCall) {
     suspend fun profileSearch(){
-        val token = call.request.headers["Bearer-Authorization"]
+        val token = call.request.headers["Authorization"]
         if (TokenCheck.isTokenValid(token.orEmpty())){
             val tokenDTO = Tokens.fetchTokens1(token.toString())
             val userDTO = tokenDTO?.let { Users.fetchUser(it.email) }
